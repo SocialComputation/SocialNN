@@ -959,7 +959,7 @@ func (ss *Sim) LogTstTrl(dt *etable.Table) {
 	ov1 := ss.ValsTsr("Race")
 	ov2 := ss.ValsTsr("Gender")
 	ov3 := ss.ValsTsr("Age")
-	
+	 
 	inp.UnitValsTensor(ivt, "Act")
 	dt.SetCellTensor("InAct", row, ivt)
 	
