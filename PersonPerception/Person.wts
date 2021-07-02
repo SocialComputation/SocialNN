@@ -1,0 +1,389 @@
+{
+	"Network": "PersonPerception",
+	"Layers": [
+		{
+			"Layer": "GenderCues",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "Gender",
+					"MetaData": {
+						"GScale": "1"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0, 0 ]
+						},
+						{
+							"Ri": 1,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0, 0 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "RaceCues",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "Race",
+					"MetaData": {
+						"GScale": "1"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0, 0 ]
+						},
+						{
+							"Ri": 1,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0, 0 ]
+						},
+						{
+							"Ri": 2,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0, 0 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "Gender",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "GenderCues",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0.6, 0 ]
+						},
+						{
+							"Ri": 1,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0, 0.6 ]
+						}
+					]
+				},
+				{
+					"From": "Aggressive",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.6 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				},
+				{
+					"From": "Docile",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.6 ]
+						}
+					]
+				},
+				{
+					"From": "SexTask",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "Race",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "RaceCues",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0.6, 0, 0 ]
+						},
+						{
+							"Ri": 1,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0.6, 0 ]
+						},
+						{
+							"Ri": 2,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0, 0.6 ]
+						}
+					]
+				},
+				{
+					"From": "Aggressive",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.6 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						},
+						{
+							"Ri": 2,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0 ]
+						}
+					]
+				},
+				{
+					"From": "Docile",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0 ]
+						},
+						{
+							"Ri": 2,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				},
+				{
+					"From": "RaceTask",
+					"MetaData": {
+						"GScale": "0.25"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						},
+						{
+							"Ri": 1,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						},
+						{
+							"Ri": 2,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "Aggressive",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "Gender",
+					"MetaData": {
+						"GScale": "0.5"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0.6, 0 ]
+						}
+					]
+				},
+				{
+					"From": "Race",
+					"MetaData": {
+						"GScale": "0.5"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0.6, 0.3, 0 ]
+						}
+					]
+				},
+				{
+					"From": "Docile",
+					"MetaData": {
+						"GScale": "1"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "Docile",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": [
+				{
+					"From": "Gender",
+					"MetaData": {
+						"GScale": "0.5"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 2,
+							"Si": [ 0, 1 ],
+							"Wt": [ 0, 0.6 ]
+						}
+					]
+				},
+				{
+					"From": "Race",
+					"MetaData": {
+						"GScale": "0.5"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 3,
+							"Si": [ 0, 1, 2 ],
+							"Wt": [ 0, 0, 0.3 ]
+						}
+					]
+				},
+				{
+					"From": "Aggressive",
+					"MetaData": {
+						"GScale": "1"
+					},
+					"Rs": [
+						{
+							"Ri": 0,
+							"N": 1,
+							"Si": [ 0 ],
+							"Wt": [ 0.3 ]
+						}
+					]
+				}
+			]
+		},
+		{
+			"Layer": "SexTask",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": null
+		},
+		{
+			"Layer": "RaceTask",
+			"MetaData": {
+				"ActMAvg": "0",
+				"ActPAvg": "0"
+			},
+			"Prjns": null
+		}
+	]
+}
