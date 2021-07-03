@@ -658,8 +658,7 @@ func (ss *Sim) ConfigGui() *gi.Window {
 	height := 1200
 
 	gi.SetAppName("PersonPerception")
-	gi.SetAppAbout(`PersonPerception: Simple model of person perception based on Freeman and Ambady (2010)
-  See <a href="https://github.com/CompCogNeuro/sims/blob/master/ch3/cats_dogs/README.md">README.md on GitHub</a>.</p>`)
+	gi.SetAppAbout(`PersonPerception: Simple model of person perception based on Freeman and Ambady (2010)`)
 
 	win := gi.NewMainWindow("person_perception", "Person Perception", width, height)
 	ss.Win = win
