@@ -36,13 +36,6 @@ Notice that, as we expected, this value appears to monotonically increase over s
 
 
 
-NOTE: Could we modify the network so we could also ask it what the Gender and Race tend to be of someone who is Docile or Aggressive?  Might have to change the layers to all be Input layers, with no clamping
-
-
-Now, let's see how this network can give us general information about men versus women.
-
-
-
 
 
 
