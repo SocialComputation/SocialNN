@@ -171,16 +171,61 @@ Two files are used to control the order of Pavlovian and Instrumental Training a
 
 Hit Init, then the button TrainPIT. This button will train the network in the two steps described above.  The Instr field has the table for the Instrumental training and the Pvlv field has the training tble for the Pavlovian training.  The Trn field has the file for information about the order of the two types of training and the number of epochs of each type of training.
 
-## Testing the Program
+Modifying the number of Epochs of training can be done by either editing the relevant file or by clicking on the Trn sim field and changing the entry in the MaxEpochs cell for either Pavlovian or Instrumental training, as desired.  
 
-Once you have trained the program you can test it in two ways.  First, you can click on `s.Wt` in the Netview window and then click on the Input nodes in the Environment and InteroState layers and you will see that there are higher weights from the Inputs to a corresponding Motive, then to less related Motives.  You can also click on the Act button and then do test trial and you will be able to see how the activations change for each event.
 
-Second, you can use a new Test file, Test.tsv, to test how the network responds to different patterns of Inputs. To do that, do the following:
-- Click on the field next to TestEnv on the left size of the GUI.
-- In the resulting dialog box, then click on `etable.Table`
-- In the resulting dialong box, (which should you a graphic display of the current Testing data), select the Open CSV button.
-- In the resulting file chooser, choose the Test.tsv file and click OK
-- You should now see a graphic display of the Test.tsv file contents. **Note** The cells in the file can be edited by double-clicking on them and you can then save the resulting values.
-- Close the dialog box and in the dialog box where you originally clicked on the `etable.Table` field you should change the Max value of the Trial variable to 10 or whatever is the current number of rows in the Test.tsv file.
-- You can edit the Test.tsv file in a text editor or Excel to modify the examples or to create new ones.
-- To test the testing examples, you can click on either Act or ActM in the NetView and then click on the Test Trial button at the top of the GUI.  Note that ActM will show you the resulting activation at the end of Testing, whereas Act will show you the evolution of the activation over time. But be aware that for the last 25 cycles the Act values will disappear as those cycles represent Training activations, which don't exist for Testing examples. 
+## Testing in current version
+
+Currently, there are two ways to do testing.  First, the default is for the Testing programs, run by clicking on the buttons on the top bar, to run through a version of the training files.  However, in this version, because the model may be trained on different data files for Pavlovian and Instrumental training, it may not be clear which data file will be used for testing.  Second, and alternative, and probably the best one is to read the preferred testing file into the TestData etable.  The current default setup of the program is to read a simple testing file (Test.tsv) into the TestData etable.  This can be viewed in the GUI by clicking on the etable.Table field after TestData on the left hand side of the GUI.  If you want to use a different test file you can do one of two things: 1) edit the Test.tsv file in the program folder or 2) click on the etable.Table field and then from the top of the resulting dialog box click on Open CSV and then from the resulting file picker, choose the new data file you want to use for testing. 
+
+The test programs in this version of the program have been modified so that when you read in a new Test file here, and then run on the Test programs it will generate a new table index and testing order.  This will let the testing programs adjust to different numbers of testing instances in the Testing file. 
+
+Several things to bear in mind: 1)The Test.tsv file or any other file you read in, can be edited in the GUI and used, without having to restart the program, but the changes will not be saved when you quit the program, unless you explicitly save them with the Save CSV button.  Although you can edit the file in the GUI, it is usually easier to edit the Test file in something like Excel. 2) If you want to edit the original file in Excel, then you need to do that and then either read the edited Test fille back in or else restart the program,  3) if you read in a new data file using Open CSV once you have started the program, when you quit it will not save the new data file as part of the project.
+
+**In this program you should make sure that you set TestInterval to -1 to make sure that it does not do testing during training, which might use the wrong data file for testing.**
+
+
+## Modeling Motivation and Behavior Over Time[NOT YET IMPLEMENTED]
+
+Currently, all the logic for how Behavior changes Environmental Affordances and Interoceptive State is in the XXXXXX function
+
+New events are presented to the network from the input_data Table, currently named World_Changes.tsv. A datatable named World.tsv represents the current State of the World and is update with each event.  
+
+Once the network settles, the Program identifies the mostly highly activated behavior from the Behavior layer and based on that behavior updates both the Environment, if relevant, and the corresponding Interoceptive state that are represented in World.tsv.  
+
+These modified values for the Environment and the Interoceptive State are then fed back into the network for the next event.
+
+Environment and Interoceptive State are changed in three ways.
+- Some Interoceptive states simply change over time.  For example, with the passage of time one gets hungrier or has a greater need for social affiliation.  The program in  changes these states with each time step as a function of an increment that can be modified by the user.  Different increments can be set for different Interoceptive States.
+-  Environment and Interoceptive State can be changed by an enacted behavior.  Eating changes both Environment and Interoceptive State.  Hanging out with friends reduces the need for Affiliation. This is handled by the program using a parameter that is set by the user.  Different parameters for each one.  
+- Environments sometime changes because of State changes:  Friend enters or leaves the situation. Weather changes. Fire alarm goes off.  Intruder shows up with gun, etc. 
+
+Oftentimes there can be a delay in the impact of an action on Interoceptive state. For example, it takes a while for eating to change level of Hunger.  This delay can be set indepependently for each Interoceptive State.  
+
+Currently, a time step in the program is equivalent to the presentation of a single state of the world to the network and the generation of a behavior.
+
+This is the logic for presenting a sequence of events to the network.  
+
+- DataTable assigned to input_data (World) is the one directly presented to the network. It represents the current State of the World, both internal and external. The initial row represents the starting state of the world. The results of this event are then used to calculate Changes in the World. These Changes caused by behavior are added to exogenous Changes represented in the WorldChanges table and then all changes are copied to the next row of the input_data table_. 
+
+Results from the current selected behavior and information from the input_data_load table about changes of State are integrated and then copied to the next row of the input_data table World_State, which represents the current State of The World.  This is the next event seen by the network.
+
+- DataTable assigned to WorldChanges represents **Exogenous CHANGES** in the State of the World over time. The first row in this table is blank.  Rest of the table represents changes from this initial state, with each subsequent row representing a following event.
+
+- WorldChanges DataTable represents when a feature appears in the environment and when it disappears from the environment.  The feature is NOT repeated in the DataTable as long as it exists. This table ONLY represents CHANGE of STATE. If a feature enters, it is represented by a positive value between 0 and 1. If a feature leaves, such as a friend leaving the environment, then this is explicitly indicated by a -1, which reduces the presence of this feature down to 0 (Program limits values to range of 0 to 1).  Thus, this table represents <b> CHANGES </b> in the state of the world. Represents when a feature appears and when it disappears. Once a feature appears and has been flagged by an entry in this table, there is no further entry until the feature disappears which is indicated by a -1.
+
+
+- This is the next event seen by the network.
+
+
+The program uses the following variables.
+
+### Variable descriptions 
+
+- _decr -- amount of change in Interostate (or Environment) per relevant behavior (e.g., consummation or satiation).  Could be either positive or negative. 
+
+- _incr  -- amount of change in either Environment or Interostate as a result of passage of time. Typically positive, although some events could have negative effect. 
+
+
+
+_incr indicates increases in interceptive states that are not  a direct result of behavior.  Instead they occur simply due to the passage of time. They increase regardless of whether the delay condition is met. So for example, studying would decrease need for achievement after delay, but other needs should steadily increase. So when you start to study, needs like hunger, sleep, need for affiliation would steadily increase, and they should increase before delay is met. The only needs that won't steadily increase right now are avoid harm and social anxiety. 
