@@ -147,21 +147,18 @@ var ParamSets = params.Sets{
 	
 				
 				
-				
-				
-				
 			{Sel: ".Back", Desc: "top-down back-projections MUST have lower relative weight scale, otherwise network hallucinates",
 				Params: params.Params{
 					"Prjn.WtScale.Rel": "0.2",
 				}},
 			
 		},
-		"Sim": &params.Sheet{ // sim params apply to sim object
-			{Sel: "Sim", Desc: "best params always finish in this time",
-				Params: params.Params{
-					"Sim.MaxEpcs": "100",
-				}},
-		},
+//		"Sim": &params.Sheet{ // sim params apply to sim object
+//			{Sel: "Sim", Desc: "best params always finish in this time",
+//				Params: params.Params{
+//					"Sim.MaxEpcs": "100",
+//				}},
+//		},
 	}},
 	{Name: "DefaultInhib", Desc: "output uses default inhib instead of lower", Sheets: params.Sheets{
 		"Network": &params.Sheet{
@@ -170,12 +167,12 @@ var ParamSets = params.Sets{
 					"Layer.Inhib.Layer.Gi": "1.8",
 				}},
 		},
-		"Sim": &params.Sheet{ // sim params apply to sim object
-			{Sel: "Sim", Desc: "takes longer -- generally doesn't finish..",
-				Params: params.Params{
-					"Sim.MaxEpcs": "100",
-				}},
-		},
+//		"Sim": &params.Sheet{ // sim params apply to sim object
+//			{Sel: "Sim", Desc: "takes longer -- generally doesn't finish..",
+//				Params: params.Params{
+//					"Sim.MaxEpcs": "100",
+//				}},
+//		},
 	}},
 	{Name: "NoMomentum", Desc: "no momentum or normalization", Sheets: params.Sheets{
 		"Network": &params.Sheet{
@@ -206,7 +203,8 @@ type Sim struct {
 	Instr        *etable.Table     `view:"no-inline" desc:"Training pattern for Instrumental Learning"`
 	Pvlv         *etable.Table     `view:"no-inline" desc:"Training pattern for Pavlovian Learning"`
 	Trn    		 *etable.Table     `view:"no-inline" desc:"Table that controls type of training and number of Epochs of training"`
-	Training	 string			   `view:"no-inline" desc:"Blank"`
+	TestData 	 *etable.Table     `view:"no-inline" desc:"Table for the Test data file"`
+	Training	 string			   `view:"no-inline" desc:"Type of training: Pavlovian or Instrumental"`
 	TrnEpcLog    *etable.Table     `view:"no-inline" desc:"training epoch-level log data"`
 	TstEpcLog    *etable.Table     `view:"no-inline" desc:"testing epoch-level log data"`
 	TstTrlLog    *etable.Table     `view:"no-inline" desc:"testing trial-level log data"`
@@ -261,7 +259,7 @@ type Sim struct {
 	RunFile      *os.File                    `view:"-" desc:"log file"`
 	ValsTsrs     map[string]*etensor.Float32 `view:"-" desc:"for holding layer values"`
 	SaveWts      bool                        `view:"-" desc:"for command-line run only, auto-save final weights after each run"`
-	NoGui        bool                        `view:"-" desc:"if true, runing in no GUI mode"`
+	NoGui        bool                        `view:"-" desc:"if true, running in no GUI mode"`
 	LogSetParams bool                        `view:"-" desc:"if true, print message for all params that are set"`
 	IsRunning    bool                        `view:"-" desc:"true if sim is running"`
 	StopNow      bool                        `view:"-" desc:"flag to stop running"`
@@ -283,6 +281,7 @@ func (ss *Sim) New() {
 	ss.Instr = &etable.Table{}
 	ss.Pvlv = &etable.Table{}
 	ss.Trn = &etable.Table{}
+	ss.TestData = &etable.Table{}
 	ss.TrnEpcLog = &etable.Table{}
 	ss.TstEpcLog = &etable.Table{}
 	ss.TstTrlLog = &etable.Table{}
@@ -319,7 +318,7 @@ func (ss *Sim) ConfigEnv() {
 		ss.MaxRuns = 1
 	}
 	if ss.MaxEpcs == 0 { // allow user override
-		ss.MaxEpcs = 50
+		ss.MaxEpcs = 100
 		ss.NZeroStop = -1
 	}
 
@@ -566,7 +565,7 @@ func (ss *Sim) TrainTrial() {
 			ss.TestAll()
 		}
 		if epc >= ss.MaxEpcs || (ss.NZeroStop > 0 && ss.NZero >= ss.NZeroStop) {
-			// done with training..
+			// done with training.
 			ss.RunEnd()
 			if ss.TrainEnv.Run.Incr() { // we are done!
 				ss.StopNow = true
@@ -869,6 +868,15 @@ switch ss.Training {
 func (ss *Sim) TestTrial(returnOnChg bool) {
 	ss.TestEnv.Step()
 
+	// TestTrial is also called periodically during training, by default. Need to make sure that TestInterval is set to -1 to turn that off.
+	
+ if ss.TestEnv.Trial.Cur == 0 {
+ 		ss.TestEnv.Table = etable.NewIdxView(ss.TestData) // define a TestData Struc item and then use "ss.TestData"
+		ss.TestEnv.NewOrder()
+	}
+	// basic idea is to call this if you read in a new testing file and then have it update the indexes and the order
+	// so that they will correspond to the size of the new file
+	
 	// Query counters FIRST
 	_, _, chg := ss.TestEnv.Counter(env.Epoch)
 	if chg {
@@ -880,9 +888,6 @@ func (ss *Sim) TestTrial(returnOnChg bool) {
 			return
 		}
 	}
-// should we put the if statement here and then the function call that updates the WorldState?
-
-// if ss.TestEnv.Trial.Cur > 0 { UpdateWorld  }
 
 	ss.ApplyInputs(&ss.TestEnv)
 	ss.AlphaCyc(false)   // !train
@@ -1016,6 +1021,7 @@ func (ss *Sim) OpenPats() {
 	// ss.OpenPatAsset(ss.Impossible, "impossible.tsv", "Impossible", "Impossible Training patterns")
 	ss.Trn.OpenCSV("InstrThenPvlv.tsv", etable.Tab) // Order of training and number of epochs for each, 
 	// Pavlov first or Instrumental first. Should eventually create menu to choose.
+	ss.TestData.OpenCSV("Test.tsv", etable.Tab) // Test data
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////
