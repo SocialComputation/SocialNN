@@ -129,12 +129,12 @@ var ParamSets = params.Sets{
 				}},	
 			{Sel: "#Approach", Desc: "",
 				Params: params.Params{
-					"Layer.Inhib.Layer.Gi": "2.3",
+					"Layer.Inhib.Layer.Gi": "1.8",
 					"Layer.Act.XX1.Gain": "400",
 				}},	
 			{Sel: "#Avoid", Desc: "",
 				Params: params.Params{
-					"Layer.Inhib.Layer.Gi": "2",
+					"Layer.Inhib.Layer.Gi": "1.5",
 					"Layer.Inhib.Layer.FB": "1.0",
 					"Layer.Act.XX1.Thr": ".49",
 					"Layer.Act.XX1.Gain": "400",
@@ -142,14 +142,14 @@ var ParamSets = params.Sets{
 				}},	
 			{Sel: "#Hidden", Desc: "Make Hidden representation a bit sparser",
 				Params: params.Params{
-					"Layer.Inhib.Layer.Gi": "2.5",
+					"Layer.Inhib.Layer.Gi": "2.0",
 				}},	
 	
 				
 				
 			{Sel: ".Back", Desc: "top-down back-projections MUST have lower relative weight scale, otherwise network hallucinates",
 				Params: params.Params{
-					"Prjn.WtScale.Rel": "0.2",
+					"Prjn.WtScale.Rel": "0.3",
 				}},
 			
 		},
@@ -380,8 +380,8 @@ func (ss *Sim) ConfigNet(net *leabra.Network) {
 	net.ConnectLayers(motb, app, motb2app,  emer.Forward)
 	net.ConnectLayers(motb, av, motb2av,  emer.Forward) 
 
-	net.BidirConnectLayers(hid, app, full)
-	net.BidirConnectLayers(hid, av, full)
+	net.BidirConnectLayers(app, hid, full)
+	net.BidirConnectLayers(av, hid, full)
 	net.BidirConnectLayers(hid, beh, full)
 	
 	// Commands that are used to position the layers in the Netview
@@ -480,7 +480,7 @@ func (ss *Sim) AlphaCyc(train bool) {
 		ss.Net.WtFmDWt()
 	}
 
-	ss.Net.AlphaCycInit()
+	ss.Net.AlphaCycInit(train)
 	ss.Time.AlphaCycStart()
 	for qtr := 0; qtr < 4; qtr++ {
 		for cyc := 0; cyc < ss.Time.CycPerQtr; cyc++ {
