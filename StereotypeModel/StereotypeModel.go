@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Simple stereotype model based on ra25 example.
-// ra25 runs a simple random-associator four-layer leabra network
-// that uses the standard supervised learning paradigm to learn
-// mappings between 25 random input / output patterns
-// defined over 5x5 input / output layers (i.e., 25 units)
+// Simple stereotype model based on ra25 code.
+
 package main
 
 import (
@@ -97,24 +94,12 @@ var ParamSets = params.Sets{
 				}},
 				
 		},
-		"Sim": &params.Sheet{ // sim params apply to sim object
-			{Sel: "Sim", Desc: "best params always finish in this time",
-				Params: params.Params{
-					"Sim.MaxEpcs": "50",
-				}},
-		},
 	}},
 	{Name: "DefaultInhib", Desc: "output uses default inhib instead of lower", Sheets: params.Sheets{
 		"Network": &params.Sheet{
 			{Sel: "#Output", Desc: "go back to default",
 				Params: params.Params{
 					"Layer.Inhib.Layer.Gi": "1.8",
-				}},
-		},
-		"Sim": &params.Sheet{ // sim params apply to sim object
-			{Sel: "Sim", Desc: "takes longer -- generally doesn't finish..",
-				Params: params.Params{
-					"Sim.MaxEpcs": "100",
 				}},
 		},
 	}},
@@ -260,7 +245,7 @@ func (ss *Sim) ConfigEnv() {
 		ss.MaxRuns = 10
 	}
 	if ss.MaxEpcs == 0 { // allow user override
-		ss.MaxEpcs = 500
+		ss.MaxEpcs = 50
 		ss.NZeroStop = 5
 	}
 
@@ -399,7 +384,7 @@ func (ss *Sim) AlphaCyc(train bool) {
 		ss.Net.WtFmDWt()
 	}
 
-	ss.Net.AlphaCycInit()
+	ss.Net.AlphaCycInit(train)
 	ss.Time.AlphaCycStart()
 	for qtr := 0; qtr < 4; qtr++ {
 		for cyc := 0; cyc < ss.Time.CycPerQtr; cyc++ {
