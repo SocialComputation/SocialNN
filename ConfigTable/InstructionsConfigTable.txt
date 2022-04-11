@@ -1,0 +1,12 @@
+Instructions
+
+This program will create a properly formatted emergent Training or Testing data table.
+
+To use this do the following:
+1) Edit the ConfigPats function.
+2) In the etable.Schema block edit the ConfigPats function to define the Name column, and then define the names, data type, and dimensions of the different column headers you want to generate. Typically you do not have columns for hidden layers, only for Input and Target layer types.  IMPORTANT: make sure the column names exactly match the name of the layer they will be applied. 
+3) add or edit patgen lines to create random data
+4) edit the file name with the name you want, in the dt.SaveCSV line.
+5) build the program
+6) execute the program: ./ConfigTable
+7) you should find a tab delimited text file, with the name you specified in the same folder and the program
