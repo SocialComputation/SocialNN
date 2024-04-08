@@ -24,11 +24,11 @@ import (
 	"github.com/emer/emergent/etime"
 	"github.com/emer/emergent/netview"
 	_ "github.com/emer/emergent/params"
-	"github.com/emer/emergent/patgen"
+	_ "github.com/emer/emergent/patgen"
 	"github.com/emer/emergent/prjn"
 	"github.com/emer/etable/agg"
 	"github.com/emer/etable/etable"
-	"github.com/emer/etable/etensor"
+	_ "github.com/emer/etable/etensor"
 	_ "github.com/emer/etable/etview" // include to get gui views
 	"github.com/emer/etable/split"
 	"github.com/emer/leabra/leabra"
@@ -255,7 +255,7 @@ func (ss *Sim) ConfigNet(net *leabra.Network) {
 	net.InitWts()
 }
 
-
+/*
 func (ss *Sim) ConfigPats() {
 	dt := ss.Pats
 	dt.SetMetaData("name", "TrainPats")
@@ -271,7 +271,7 @@ func (ss *Sim) ConfigPats() {
 	patgen.PermutedBinaryRows(dt.Cols[2], 6, 1, 0)
 	dt.SaveCSV("random_5x5_25_gen.tsv", etable.Tab, etable.Headers)
 }
-
+*/
 func (ss *Sim) OpenPats() {
 	dt := ss.Pats
 	dt.SetMetaData("name", "TrainPats")
