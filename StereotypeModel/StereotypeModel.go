@@ -149,6 +149,7 @@ type Sim struct {
 	TestEnv      env.FixedTable    `desc:"Testing environment -- manages iterating over testing"`
 	Time         leabra.Time       `desc:"leabra timing parameters and state"`
 	ViewOn       bool              `desc:"whether to update the network view while running"`
+	
 	TrainUpdt    leabra.TimeScales `desc:"at what time scale to update the display during training?  Anything longer than Epoch updates at Epoch in this model"`
 	TestUpdt     leabra.TimeScales `desc:"at what time scale to update the display during testing?  Anything longer than Epoch updates at Epoch in this model"`
 	TestInterval int               `desc:"how often to run through all the test patterns, in terms of training epochs -- can use 0 or -1 for no testing"`
@@ -324,7 +325,7 @@ func (ss *Sim) Init() {
 	ss.StopNow = false
 	ss.SetParams("", ss.LogSetParams) // all sheets
 	ss.NewRun()
-	ss.UpdateView(true)
+	ss.UpdateView(true, -1)
 }
 
 // InitRndSeed initializes the random seed based on current training run number
@@ -353,9 +354,9 @@ func (ss *Sim) Counters(train bool) string {
 	}
 }
 
-func (ss *Sim) UpdateView(train bool) {
+func (ss *Sim) UpdateView(train bool, cyc int) {
 	if ss.NetView != nil && ss.NetView.IsVisible() {
-		ss.NetView.Record(ss.Counters(train))
+		ss.NetView.Record(ss.Counters(train), cyc)
 		// note: essential to use Go version of update when called from another goroutine
 		ss.NetView.GoUpdate() // note: using counters is significantly slower..
 	}
@@ -397,11 +398,11 @@ func (ss *Sim) AlphaCyc(train bool) {
 				switch viewUpdt {
 				case leabra.Cycle:
 					if cyc != ss.Time.CycPerQtr-1 { // will be updated by quarter
-						ss.UpdateView(train)
+						ss.UpdateView(train, -1)
 					}
 				case leabra.FastSpike:
 					if (cyc+1)%10 == 0 {
-						ss.UpdateView(train)
+						ss.UpdateView(train, -1)
 					}
 				}
 			}
@@ -411,10 +412,10 @@ func (ss *Sim) AlphaCyc(train bool) {
 		if ss.ViewOn {
 			switch {
 			case viewUpdt <= leabra.Quarter:
-				ss.UpdateView(train)
+				ss.UpdateView(train, -1)
 			case viewUpdt == leabra.Phase:
 				if qtr >= 2 {
-					ss.UpdateView(train)
+					ss.UpdateView(train, -1)
 				}
 			}
 		}
@@ -422,9 +423,11 @@ func (ss *Sim) AlphaCyc(train bool) {
 
 	if train {
 		ss.Net.DWt()
+		ss.NetView.RecordSyns() // note: critical to update weights here so DWt is visible
+		ss.Net.WtFmDWt()
 	}
 	if ss.ViewOn && viewUpdt == leabra.AlphaCycle {
-		ss.UpdateView(train)
+		ss.UpdateView(train, -1)
 	}
 	if ss.TstCycPlot != nil && !train {
 		ss.TstCycPlot.GoUpdate() // make sure up-to-date at end
@@ -463,7 +466,7 @@ func (ss *Sim) TrainTrial() {
 	if chg {
 		ss.LogTrnEpc(ss.TrnEpcLog)
 		if ss.ViewOn && ss.TrainUpdt > leabra.AlphaCycle {
-			ss.UpdateView(true)
+			ss.UpdateView(true, -1)
 		}
 		if ss.TestInterval > 0 && epc%ss.TestInterval == 0 { // note: epc is *next* so won't trigger first time
 			ss.TestAll()
@@ -625,7 +628,7 @@ func (ss *Sim) TestTrial(returnOnChg bool) {
 	_, _, chg := ss.TestEnv.Counter(env.Epoch)
 	if chg {
 		if ss.ViewOn && ss.TestUpdt > leabra.AlphaCycle {
-			ss.UpdateView(false)
+			ss.UpdateView(false, -1)
 		}
 		ss.LogTstEpc(ss.TstEpcLog)
 		if returnOnChg {
@@ -638,7 +641,7 @@ func (ss *Sim) TestTrial(returnOnChg bool) {
 	ss.TrialStats(false) // !accumulate
 	ss.LogTstTrl(ss.TstTrlLog)
 	if ss.NetData != nil { // offline record net data from testing, just final state
-		ss.NetData.Record(ss.Counters(false))
+		ss.NetData.Record(ss.Counters(false), -1, 1)
 	}
 }
 
@@ -1593,7 +1596,7 @@ func (ss *Sim) CmdArgs() {
 	}
 	if saveNetData {
 		ss.NetData = &netview.NetData{}
-		ss.NetData.Init(ss.Net, 200) // 200 = amount to save
+		ss.NetData.Init(ss.Net, 200, true) // 200 = amount to save
 	}
 	if ss.SaveWts {
 		fmt.Printf("Saving final weights per run\n")
